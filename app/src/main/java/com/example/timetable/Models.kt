@@ -1,16 +1,19 @@
 package com.example.timetable
 
+import com.google.gson.annotations.SerializedName
+
 data class Timetables(
-    val timetableEvent: List<TimetableEvent>?,
+    @SerializedName("timetableEvents") val timetableEvent: List<TimetableEvent>?,
     val studyPeriods: String?
 )
 
 data class TimetableEvent(
-    val name: String?,
+    @SerializedName("nameEt") val name: String?,
     val date: String?,
     val timeStart: String?,
-    val teacher: List<Teacher>?,
-    val room: List<TimetableRoom>?,
+    val timeEnd: String?,
+    val teachers: List<Teacher>?,
+    val rooms: List<TimetableRoom>?,
     val studentGroups: List<StudentGroup>?
 )
 
