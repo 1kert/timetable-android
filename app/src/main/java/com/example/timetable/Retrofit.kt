@@ -16,6 +16,6 @@ object Retrofit {
 }
 
 interface ApiService {
-    @GET("hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroups=7596")
+    @GET("hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroups=7597")
     suspend fun getTimetable(): Timetables
 }

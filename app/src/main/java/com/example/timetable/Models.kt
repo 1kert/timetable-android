@@ -3,8 +3,7 @@ package com.example.timetable
 import com.google.gson.annotations.SerializedName
 
 data class Timetables(
-    @SerializedName("timetableEvents") val timetableEvent: List<TimetableEvent>?,
-    val studyPeriods: String?
+    @SerializedName("timetableEvents") val timetableEvent: List<TimetableEvent>?
 )
 
 data class TimetableEvent(
