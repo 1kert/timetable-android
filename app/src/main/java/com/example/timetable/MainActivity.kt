@@ -1,7 +1,6 @@
 package com.example.timetable
 
 import android.app.Application
-import android.content.pm.LauncherApps
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +11,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -57,7 +58,17 @@ fun MainApp(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            Column {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(8.dp)
+                    .verticalScroll(rememberScrollState())
+            ) {
+                if (!todayEvents.isNullOrEmpty()) Text(
+                    text = "today",
+                    style = MaterialTheme.typography.headlineLarge
+                )
+
                 todayEvents?.forEach { event ->
                     val rooms = event.rooms?.map { it.roomCode }?.joinToString(", ")
                     Text(
@@ -67,6 +78,11 @@ fun MainApp(
                 }
 
                 Spacer(modifier = Modifier.height(38.dp))
+
+                if (!tomorrowEvents.isNullOrEmpty()) Text(
+                    text = "tomorrow",
+                    style = MaterialTheme.typography.headlineLarge
+                )
 
                 tomorrowEvents?.forEach { event ->
                     val rooms = event.rooms?.map { it.roomCode }?.joinToString(", ")

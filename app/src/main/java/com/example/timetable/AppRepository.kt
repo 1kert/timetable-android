@@ -37,11 +37,11 @@ class AppRepository @Inject constructor() {
         return allEvents.filter { event ->
             if (event.date == null) return@filter false
 
-            var localDate = Date()
-            val calendar = Calendar.getInstance()
-            calendar.time = localDate
-            calendar.add(Calendar.DAY_OF_MONTH, days)
-            localDate = calendar.time
+            val localDate = Calendar.getInstance().apply {
+                time = Date()
+                add(Calendar.DAY_OF_MONTH, days)
+            }.time
+
             val formattedDate = event.date.substring(0, event.date.indexOf('T'))
             val format = SimpleDateFormat(
                 "yyyy-MM-dd",
