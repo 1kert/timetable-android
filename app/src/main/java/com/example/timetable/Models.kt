@@ -21,8 +21,7 @@ data class StudentGroup(
 )
 
 data class TimetableRoom(
-    val roomCode: String?,
-    val buildingCode: String?
+    val roomCode: String?
 )
 
 data class Teacher(
