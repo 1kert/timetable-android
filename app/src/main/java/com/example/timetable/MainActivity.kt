@@ -61,7 +61,11 @@ fun MainApp(
                 .fillMaxSize()
                 .padding(innerPadding)
         ) {
-            MainAppContent(todayEvents = todayEvents, tomorrowEvents = tomorrowEvents)
+            MainAppContent(
+                todayEvents = todayEvents,
+                tomorrowEvents = tomorrowEvents,
+                formatDate = appViewmodel::formatDate
+            )
         }
     }
 }
@@ -70,7 +74,8 @@ fun MainApp(
 @Composable
 fun MainAppContent(
     todayEvents: List<TimetableEvent>?,
-    tomorrowEvents: List<TimetableEvent>?
+    tomorrowEvents: List<TimetableEvent>?,
+    formatDate: (String?) -> String
 ) {
     HorizontalPager(
         state = rememberPagerState {
@@ -87,18 +92,21 @@ fun MainAppContent(
         ) {
             when (page) {
                 0 -> {
+                    val dateString: String? = todayEvents?.getOrElse(0) { null }?.date
                     Text(
-                        text = "today",
+                        text = "today (${formatDate(dateString)})",
                         style = MaterialTheme.typography.titleLarge
                     )
+
                     todayEvents?.forEach { event ->
                         EventCard(event)
                     }
                 }
 
                 1 -> {
+                    val dateString: String? = tomorrowEvents?.getOrElse(0) { null }?.date
                     Text(
-                        text = "tomorrow",
+                        text = "tomorrow (${formatDate(dateString)})",
                         style = MaterialTheme.typography.titleLarge
                     )
                     tomorrowEvents?.forEach { event ->

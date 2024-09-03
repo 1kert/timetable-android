@@ -5,23 +5,15 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
-import java.text.DateFormat
 import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDate
-import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
 class AppViewmodel @Inject constructor(
     private val appRepository: AppRepository
-): ViewModel() {
-    private val apiService = Retrofit.api
-    private var timetables: Timetables? = null
+) : ViewModel() {
     private val _uiState = MutableStateFlow<List<List<TimetableEvent>>>(listOf())
     val uiState = _uiState.asStateFlow()
 
@@ -35,9 +27,17 @@ class AppViewmodel @Inject constructor(
     private fun observeEvents() {
         viewModelScope.launch {
             appRepository.weekEvents.collect { collected ->
-                println(collected)
                 _uiState.value = collected
             }
         }
+    }
+
+    fun formatDate(dateStr: String?): String {
+        if (dateStr == null) return ""
+        val locale = Locale.forLanguageTag("et")
+        val format = SimpleDateFormat("yyyy-MM-dd", locale)
+        val date = format.parse(dateStr) ?: ""
+
+        return SimpleDateFormat("d MMMM", locale).format(date)
     }
 }
