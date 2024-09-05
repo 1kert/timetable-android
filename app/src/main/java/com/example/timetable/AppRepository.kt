@@ -29,7 +29,10 @@ class AppRepository @Inject constructor() {
     private fun filterAllTables() {
         println(filterTablesByDay(1))
         val events = mutableListOf<List<TimetableEvent>>()
-        for (i in 0..1) events.add(filterTablesByDay(i))
+        for (i in 0..7) {
+            val filteredDay = filterTablesByDay(i)
+            if (filteredDay.isNotEmpty()) events.add(filteredDay)
+        }
         _weekEvents.value = events.toList()
     }
 

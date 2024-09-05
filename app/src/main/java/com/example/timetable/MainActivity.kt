@@ -28,6 +28,7 @@ import com.example.timetable.components.EventCard
 import com.example.timetable.ui.theme.TimetableTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
+import java.sql.Time
 
 @HiltAndroidApp
 class Application : Application()
@@ -50,8 +51,6 @@ fun MainApp(
     appViewmodel: AppViewmodel = hiltViewModel()
 ) {
     val uiState by appViewmodel.uiState.collectAsState()
-    val todayEvents = uiState.getOrNull(0)
-    val tomorrowEvents = uiState.getOrNull(1)
 
     Scaffold(
         modifier = Modifier.fillMaxSize()
@@ -62,9 +61,8 @@ fun MainApp(
                 .padding(innerPadding)
         ) {
             MainAppContent(
-                todayEvents = todayEvents,
-                tomorrowEvents = tomorrowEvents,
-                formatDate = appViewmodel::formatDate
+                events = uiState,
+                getDayName = appViewmodel::getDayName
             )
         }
     }
@@ -73,47 +71,33 @@ fun MainApp(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainAppContent(
-    todayEvents: List<TimetableEvent>?,
-    tomorrowEvents: List<TimetableEvent>?,
-    formatDate: (String?) -> String
+    events: List<List<TimetableEvent>>,
+    getDayName: (List<TimetableEvent>) -> String,
 ) {
-    HorizontalPager(
-        state = rememberPagerState {
-            2
-        }
-    ) { page ->
+    HorizontalPager(state = rememberPagerState { events.size }) { page ->
+        TimetablePage(events = events[page], getDayName = getDayName)
+    }
+}
 
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(8.dp)
-                .verticalScroll(rememberScrollState()),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            when (page) {
-                0 -> {
-                    val dateString: String? = todayEvents?.getOrElse(0) { null }?.date
-                    Text(
-                        text = "today (${formatDate(dateString)})",
-                        style = MaterialTheme.typography.titleLarge
-                    )
+@Composable
+fun TimetablePage(
+    events: List<TimetableEvent>,
+    getDayName: (List<TimetableEvent>) -> String
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(8.dp)
+            .verticalScroll(rememberScrollState()),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = getDayName(events),
+            style = MaterialTheme.typography.titleLarge
+        )
 
-                    todayEvents?.forEach { event ->
-                        EventCard(event)
-                    }
-                }
-
-                1 -> {
-                    val dateString: String? = tomorrowEvents?.getOrElse(0) { null }?.date
-                    Text(
-                        text = "tomorrow (${formatDate(dateString)})",
-                        style = MaterialTheme.typography.titleLarge
-                    )
-                    tomorrowEvents?.forEach { event ->
-                        EventCard(event)
-                    }
-                }
-            }
+        events.forEach { event ->
+            EventCard(event)
         }
     }
 }
