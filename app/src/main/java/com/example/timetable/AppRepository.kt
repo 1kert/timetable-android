@@ -14,13 +14,13 @@ class AppRepository @Inject constructor() {
     private val _weekEvents = MutableStateFlow(listOf<List<TimetableEvent>>())
     val weekEvents = _weekEvents.asStateFlow()
 
-    suspend fun fetchTables() {
+    suspend fun fetchTables(url: String) {
         try {
-            val response = apiService.getTimetable()
+            val response = apiService.getTimetable(url)
             allEvents = response.timetableEvent ?: listOf()
         } catch (e: Exception) {
-            println("error fetching")
             e.printStackTrace()
+            return
         }
 
         filterAllTables()
@@ -29,7 +29,7 @@ class AppRepository @Inject constructor() {
     private fun filterAllTables() {
         println(filterTablesByDay(1))
         val events = mutableListOf<List<TimetableEvent>>()
-        for (i in 0..7) {
+        for (i in 0..120) {
             val filteredDay = filterTablesByDay(i)
             if (filteredDay.isNotEmpty()) events.add(filteredDay)
         }
@@ -41,7 +41,6 @@ class AppRepository @Inject constructor() {
             if (event.date == null) return@filter false
 
             val localDate = Calendar.getInstance().apply {
-                time = Date()
                 add(Calendar.DAY_OF_MONTH, days)
             }.time
 

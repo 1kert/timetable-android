@@ -6,10 +6,13 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -21,6 +24,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -28,7 +32,6 @@ import com.example.timetable.components.EventCard
 import com.example.timetable.ui.theme.TimetableTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
-import java.sql.Time
 
 @HiltAndroidApp
 class Application : Application()
@@ -61,8 +64,9 @@ fun MainApp(
                 .padding(innerPadding)
         ) {
             MainAppContent(
-                events = uiState,
-                getDayName = appViewmodel::getDayName
+                uiState = uiState,
+                getDayName = appViewmodel::getDayName,
+                onNextGroup = appViewmodel::onNextGroup
             )
         }
     }
@@ -71,18 +75,26 @@ fun MainApp(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainAppContent(
-    events: List<List<TimetableEvent>>,
+    uiState: TimetableViewState,
+    onNextGroup: () -> Unit,
     getDayName: (List<TimetableEvent>) -> String,
 ) {
-    HorizontalPager(state = rememberPagerState { events.size }) { page ->
-        TimetablePage(events = events[page], getDayName = getDayName)
+    HorizontalPager(state = rememberPagerState { uiState.events.size }) { page ->
+        TimetablePage(
+            events = uiState.events[page],
+            getDayName = getDayName,
+            currentGroup = uiState.selectedGroup,
+            onNextGroup = onNextGroup
+        )
     }
 }
 
 @Composable
 fun TimetablePage(
     events: List<TimetableEvent>,
-    getDayName: (List<TimetableEvent>) -> String
+    currentGroup: String,
+    getDayName: (List<TimetableEvent>) -> String,
+    onNextGroup: () -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -91,10 +103,22 @@ fun TimetablePage(
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        Text(
-            text = getDayName(events),
-            style = MaterialTheme.typography.titleLarge
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Text(
+                text = getDayName(events),
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.weight(1f)
+            )
+            Text(
+                text = currentGroup,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.clickable(onClick = onNextGroup)
+            )
+        }
 
         events.forEach { event ->
             EventCard(event)

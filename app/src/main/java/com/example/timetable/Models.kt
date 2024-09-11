@@ -13,7 +13,8 @@ data class TimetableEvent(
     val timeEnd: String?,
     val teachers: List<Teacher>?,
     val rooms: List<TimetableRoom>?,
-    val studentGroups: List<StudentGroup>?
+    val studentGroups: List<StudentGroup>?,
+    val singleEvent: Boolean
 )
 
 data class StudentGroup(

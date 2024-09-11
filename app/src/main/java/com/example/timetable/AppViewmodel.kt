@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -16,23 +17,35 @@ import javax.inject.Inject
 class AppViewmodel @Inject constructor(
     private val appRepository: AppRepository
 ) : ViewModel() {
-    private val _uiState = MutableStateFlow<List<List<TimetableEvent>>>(listOf())
     private val locale = Locale.forLanguageTag("et")
+    private val _uiState = MutableStateFlow(TimetableViewState())
     val uiState = _uiState.asStateFlow()
 
     init {
-        fetchTables()
+        fetchTables(groups[uiState.value.selectedGroup].orEmpty())
         observeEvents()
     }
 
-    private fun fetchTables() = viewModelScope.launch { appRepository.fetchTables() }
+    private fun fetchTables(url: String) = viewModelScope.launch { appRepository.fetchTables(url) }
 
     private fun observeEvents() {
         viewModelScope.launch {
             appRepository.weekEvents.collect { collected ->
-                _uiState.value = collected
+                _uiState.update {
+                    it.copy(events = collected)
+                }
             }
         }
+    }
+
+    fun onNextGroup() {
+        var current = uiState.value.selectedGroup
+        val keys = groups.keys.toList()
+        var index = keys.indexOf(current) + 1
+        if (index >= keys.size) index = 0
+        current = keys[index]
+        fetchTables(groups[current].orEmpty())
+        _uiState.update { it.copy(selectedGroup = current) }
     }
 
     fun getDayName(events: List<TimetableEvent>): String {
@@ -59,3 +72,14 @@ class AppViewmodel @Inject constructor(
         return formattedDate
     }
 }
+
+data class TimetableViewState(
+    val events: List<List<TimetableEvent>> = listOf(),
+    val selectedGroup: String = "ta23"
+)
+
+private val groups = mapOf(
+    "ta23" to "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroups=7597",
+    "tak23" to "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroups=7596",
+    "tak24" to "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroups=9329"
+)

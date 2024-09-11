@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -20,6 +21,9 @@ import com.example.timetable.Teacher
 import com.example.timetable.TimetableEvent
 import com.example.timetable.TimetableRoom
 import com.example.timetable.ui.theme.TimetableTheme
+import com.example.timetable.ui.theme.defaultEventColorDark
+import com.example.timetable.ui.theme.onEventColorDark
+import com.example.timetable.ui.theme.singleEventColorDark
 
 @Composable
 fun EventCard(
@@ -27,6 +31,9 @@ fun EventCard(
 ) {
     Card(
         modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors().copy(
+            containerColor = if(event.singleEvent) singleEventColorDark else defaultEventColorDark
+        )
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(2.dp),
@@ -36,7 +43,8 @@ fun EventCard(
                 text = event.name.orEmpty(),
                 style = MaterialTheme.typography.titleMedium,
                 overflow = TextOverflow.Ellipsis,
-                maxLines = 2
+                maxLines = 2,
+                color = onEventColorDark
             )
 
             Row(
@@ -46,29 +54,37 @@ fun EventCard(
                 Column(
                     modifier = Modifier.weight(1f)
                 ) {
-                    Text(
-                        text = event.rooms?.map { it.roomCode }?.joinToString(", ").orEmpty(),
+                    val rooms = event.rooms ?: listOf()
+                    val studentGroups = event.studentGroups ?: listOf()
+                    val teachers = event.teachers ?: listOf()
+
+                    if(rooms.isNotEmpty()) Text(
+                        text = rooms.map { it.roomCode }.joinToString(", "),
                         style = MaterialTheme.typography.bodySmall,
                         overflow = TextOverflow.Ellipsis,
-                        maxLines = 2
+                        maxLines = 2,
+                        color = onEventColorDark
                     )
-                    Text(
-                        text = event.studentGroups?.map { it.code }?.joinToString(", ").orEmpty(),
+                    if(studentGroups.isNotEmpty()) Text(
+                        text = studentGroups.map { it.code }.joinToString(", "),
                         style = MaterialTheme.typography.bodySmall,
                         overflow = TextOverflow.Ellipsis,
-                        maxLines = 2
+                        maxLines = 2,
+                        color = onEventColorDark
                     )
-                    Text(
-                        text = event.teachers?.map { it.name }?.joinToString(", ").orEmpty(),
+                    if(teachers.isNotEmpty()) Text(
+                        text = teachers.map { it.name }.joinToString(", "),
                         style = MaterialTheme.typography.bodySmall,
                         overflow = TextOverflow.Ellipsis,
-                        maxLines = 2
+                        maxLines = 2,
+                        color = onEventColorDark
                     )
                 }
                 Text(
                     text = "${event.timeStart} - ${event.timeEnd}",
                     style = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Medium
+                    fontWeight = FontWeight.Medium,
+                    color = onEventColorDark
                 )
             }
         }
@@ -87,7 +103,8 @@ private fun EventCardPreview() {
                 timeStart = "15:14",
                 timeEnd = "24:00",
                 date = null,
-                studentGroups = listOf(StudentGroup("TAK-23"), StudentGroup("TA-23"))
+                studentGroups = listOf(StudentGroup("TAK-23"), StudentGroup("TA-23")),
+                singleEvent = false
             )
         )
     }
