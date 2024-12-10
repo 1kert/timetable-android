@@ -1,4 +1,4 @@
-package com.example.timetable
+package com.example.timetable.di
 
 import dagger.Module
 import dagger.hilt.InstallIn

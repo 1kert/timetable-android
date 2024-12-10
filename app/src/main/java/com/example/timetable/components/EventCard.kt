@@ -16,10 +16,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.timetable.StudentGroup
-import com.example.timetable.Teacher
-import com.example.timetable.TimetableEvent
-import com.example.timetable.TimetableRoom
+import com.example.timetable.data.StudentGroup
+import com.example.timetable.data.Teacher
+import com.example.timetable.data.TimetableEvent
+import com.example.timetable.data.TimetableRoom
 import com.example.timetable.ui.theme.TimetableTheme
 import com.example.timetable.ui.theme.defaultEventColorDark
 import com.example.timetable.ui.theme.onEventColorDark

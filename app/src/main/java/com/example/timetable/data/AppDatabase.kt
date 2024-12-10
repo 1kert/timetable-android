@@ -1,7 +1,4 @@
-package com.example.timetable
-
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+package com.example.timetable.data
 
 //@Entity(tableName = "Tables")
 //data class TablesEntity(

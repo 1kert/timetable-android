@@ -1,4 +1,4 @@
-package com.example.timetable
+package com.example.timetable.data
 
 import com.google.gson.annotations.SerializedName
 

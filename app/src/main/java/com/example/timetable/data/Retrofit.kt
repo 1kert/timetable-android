@@ -1,4 +1,4 @@
-package com.example.timetable
+package com.example.timetable.data
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
