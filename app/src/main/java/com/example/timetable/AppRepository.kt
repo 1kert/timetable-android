@@ -1,10 +1,11 @@
 package com.example.timetable
 
+import com.example.timetable.data.Retrofit
+import com.example.timetable.data.TimetableEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.text.SimpleDateFormat
 import java.util.Calendar
-import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 

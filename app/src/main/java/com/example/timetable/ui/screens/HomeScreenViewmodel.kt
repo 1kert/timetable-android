@@ -1,20 +1,21 @@
-package com.example.timetable
+package com.example.timetable.ui.screens
 
 import android.icu.util.Calendar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.timetable.AppRepository
+import com.example.timetable.data.TimetableEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
-import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class AppViewmodel @Inject constructor(
+class HomeScreenViewmodel @Inject constructor(
     private val appRepository: AppRepository
 ) : ViewModel() {
     private val locale = Locale.forLanguageTag("et")
