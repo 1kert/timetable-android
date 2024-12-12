@@ -1,24 +1,24 @@
 package com.example.timetable.ui.screens
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.timetable.data.TimetableEvent
+import com.example.timetable.components.AppBottomBar
+import com.example.timetable.components.AppTopBar
 import com.example.timetable.components.EventCard
+import com.example.timetable.data.TimetableEvent
 
 @Composable
 fun HomeScreen(
@@ -27,7 +27,10 @@ fun HomeScreen(
     val uiState by appViewmodel.uiState.collectAsState()
 
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            AppBottomBar()
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -52,7 +55,10 @@ fun MainAppContent(
 ) {
     Text("")
 
-    HorizontalPager(state = rememberPagerState { uiState.events.size }) { page ->
+    HorizontalPager(
+        state = rememberPagerState { uiState.events.size },
+        modifier = Modifier.fillMaxSize()
+    ) { page ->
         TimetablePage(
             events = uiState.events[page],
             getDayName = getDayName,
@@ -70,31 +76,31 @@ fun TimetablePage(
     onNextGroup: () -> Unit
 ) {
     Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp)
-            .verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+            .padding(top = 8.dp)
+            .padding(horizontal = 8.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                text = getDayName(events),
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.weight(1f)
-            )
-            Text(
-                text = currentGroup,
-                style = MaterialTheme.typography.titleMedium,
-                modifier = Modifier.clickable(onClick = onNextGroup)
-            )
-        }
+        AppTopBar(
+            dateString = getDayName(events),
+            groupTag = currentGroup,
+            onSettingsClick = {},
+            onNextGroup = onNextGroup
+        )
 
-        events.forEach { event ->
-            EventCard(event)
+        LazyColumn(
+            state = rememberLazyListState(),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            modifier = Modifier.fillMaxSize()
+        ) {
+            items(events) { event ->
+                EventCard(event)
+            }
+
+            item {
+                Spacer(Modifier)
+            }
         }
     }
 }
