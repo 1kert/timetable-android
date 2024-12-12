@@ -26,11 +26,11 @@ fun AppBottomBar() {
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .fillMaxWidth()
+            .clip(RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp))
             .background(MaterialTheme.colorScheme.primary)
-            .clip(RoundedCornerShape(16.dp))
-    ) {
+        ) {
         Row(
-            horizontalArrangement = Arrangement.spacedBy(32.dp),
+            horizontalArrangement = Arrangement.spacedBy(42.dp),
             modifier = Modifier.padding(16.dp)
         ) {
             NavigationButton(

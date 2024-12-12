@@ -17,8 +17,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.timetable.data.TimetableEvent
+import com.example.timetable.components.AppBottomBar
 import com.example.timetable.components.EventCard
+import com.example.timetable.data.TimetableEvent
 
 @Composable
 fun HomeScreen(
@@ -27,7 +28,10 @@ fun HomeScreen(
     val uiState by appViewmodel.uiState.collectAsState()
 
     Scaffold(
-        modifier = Modifier.fillMaxSize()
+        modifier = Modifier.fillMaxSize(),
+        bottomBar = {
+            AppBottomBar()
+        }
     ) { innerPadding ->
         Box(
             modifier = Modifier
@@ -52,7 +56,10 @@ fun MainAppContent(
 ) {
     Text("")
 
-    HorizontalPager(state = rememberPagerState { uiState.events.size }) { page ->
+    HorizontalPager(
+        state = rememberPagerState { uiState.events.size },
+        modifier = Modifier.fillMaxSize()
+    ) { page ->
         TimetablePage(
             events = uiState.events[page],
             getDayName = getDayName,
@@ -72,7 +79,8 @@ fun TimetablePage(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(8.dp)
+            .padding(top = 8.dp)
+            .padding(horizontal = 8.dp)
             .verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
