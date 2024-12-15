@@ -2,7 +2,8 @@ package com.example.timetable.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val singleEventColorDark = Color(0xFF1E537C)
-val onEventColorDark = Color.White
-val defaultEventColorDark = Color(0xFF8A6907)
+val singleEventColorDark = Color(0xFF81BBE9)
+val onEventColorPrimaryDark = Color.Black
+val onEventColorSecondaryDark = Color(0x99000000)
+val defaultEventColorDark = Color(0xFFF1E379)
 val navigationIconSelected = Color(0xFFEDED58)
