@@ -24,7 +24,8 @@ val Typography = Typography(
     ),
     titleLarge = baseline.titleLarge.copy(fontSize = 24.sp, fontWeight = FontWeight.Bold),
     bodyMedium = baseline.bodyMedium,
-    bodySmall = baseline.bodySmall.copy()
+    bodySmall = baseline.bodySmall.copy(),
+    headlineSmall = baseline.headlineSmall.copy(fontWeight = FontWeight.Bold)
     /* Other default text styles to override
     titleLarge = TextStyle(
         fontFamily = FontFamily.Default,
