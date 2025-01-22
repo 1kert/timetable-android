@@ -3,6 +3,7 @@ package com.example.timetable.ui.screens
 import android.icu.util.Calendar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.NavHostController
 import com.example.timetable.AppRepository
 import com.example.timetable.data.TimetableEvent
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -72,12 +73,26 @@ class HomeScreenViewmodel @Inject constructor(
         if (eventDate.compareTo(date.apply { add(Calendar.DAY_OF_MONTH, 1) }) == 0) return "Homme ($formattedDate)"
         return formattedDate
     }
+
+    fun navigate(navHostController: NavHostController, navigationState: NavigationState) {
+        _uiState.update {
+            it.copy(currentNavigation = navigationState)
+        }
+        navHostController.navigate(navigationState.toString())
+    }
 }
 
 data class TimetableViewState(
     val events: List<List<TimetableEvent>> = listOf(),
-    val selectedGroup: String = "ta23"
+    val selectedGroup: String = "ta23",
+    val currentNavigation: NavigationState = NavigationState.Student
 )
+
+enum class NavigationState {
+    Student,
+    Teacher,
+    Room
+}
 
 private val groups = mapOf(
     "ta23" to "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroups=7597",

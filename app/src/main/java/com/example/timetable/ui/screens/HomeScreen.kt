@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.compose.rememberNavController
 import com.example.timetable.components.AppBottomBar
 import com.example.timetable.components.AppTopBar
 import com.example.timetable.components.EventCard
@@ -25,11 +26,17 @@ fun HomeScreen(
     appViewmodel: HomeScreenViewmodel = hiltViewModel()
 ) {
     val uiState by appViewmodel.uiState.collectAsState()
+    val navHostController = rememberNavController()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         bottomBar = {
-            AppBottomBar()
+            AppBottomBar(
+                currentNavigationState = uiState.currentNavigation,
+                onTeacherClick = { appViewmodel.navigate(navHostController, NavigationState.Teacher) },
+                onStudentClick = { appViewmodel.navigate(navHostController, NavigationState.Student) },
+                onRoomClick = { appViewmodel.navigate(navHostController, NavigationState.Room) },
+            )
         }
     ) { innerPadding ->
         Box(
