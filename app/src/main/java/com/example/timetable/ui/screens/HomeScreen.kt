@@ -29,7 +29,9 @@ fun HomeScreen(
     val navHostController = rememberNavController()
 
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .navigationBarsPadding(),
         bottomBar = {
             AppBottomBar(
                 currentNavigationState = uiState.currentNavigation,

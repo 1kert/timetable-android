@@ -6,6 +6,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import com.google.accompanist.systemuicontroller.rememberSystemUiController
 
 private val DarkColorScheme = darkColorScheme(
     primary = Color(0xFF4A75C4),
@@ -31,13 +32,20 @@ fun TimetableTheme(
     dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
+    val systemUiController = rememberSystemUiController()
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current
             if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
         }
 
-        darkTheme -> DarkColorScheme
+        darkTheme -> {
+            systemUiController.setSystemBarsColor(DarkColorScheme.background)
+            systemUiController.setNavigationBarColor(color = DarkColorScheme.primary, navigationBarContrastEnforced = false)
+            DarkColorScheme
+        }
+
         else -> DarkColorScheme
     }
 
