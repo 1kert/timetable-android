@@ -5,12 +5,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import retrofit2.http.Url
 
-private const val ta23 = "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroups=7597"
-private const val tak23 = "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroups=7596"
-private const val tak24 = "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroups=9329"
-
 object Retrofit {
-    private const val URL = "https://tahvel.edu.ee"
+    private const val URL = "https://tahveltp.edu.ee"
     val api: ApiService by lazy {
         val retrofit = Retrofit.Builder()
             .baseUrl(URL)

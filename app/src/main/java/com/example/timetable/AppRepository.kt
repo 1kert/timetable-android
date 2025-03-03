@@ -24,36 +24,39 @@ class AppRepository @Inject constructor() {
             return
         }
 
-        filterAllTables()
+        filterAllTables(allEvents)
     }
 
-    private fun filterAllTables() {
-        println(filterTablesByDay(1))
+    private fun filterAllTables(allEvents: List<TimetableEvent>) {
         val events = mutableListOf<List<TimetableEvent>>()
-        for (i in 0..120) {
-            val filteredDay = filterTablesByDay(i)
+        for (i in 0..120) { // todo: fix dog shit complexity
+            val filteredDay = filterTablesByDay(allEvents = allEvents, days = i)
             if (filteredDay.isNotEmpty()) events.add(filteredDay)
         }
         _weekEvents.value = events.toList()
     }
 
-    private fun filterTablesByDay(days: Int): List<TimetableEvent> {
+    private fun filterTablesByDay(
+        allEvents: List<TimetableEvent>,
+        days: Int
+    ): List<TimetableEvent> {
         return allEvents.filter { event ->
             if (event.date == null) return@filter false
 
-            val localDate = Calendar.getInstance().apply {
+            val relativeLocalDate = Calendar.getInstance().apply {
                 add(Calendar.DAY_OF_MONTH, days)
             }.time
 
-            val formattedDate = event.date.substring(0, event.date.indexOf('T'))
-            val format = SimpleDateFormat(
+            val eventDateSubStr = event.date.substring(0, event.date.indexOf('T'))
+            val dateFormat = SimpleDateFormat(
                 "yyyy-MM-dd",
                 Locale.forLanguageTag("et")
             )
 
-            val eventDate = format.parse(formattedDate) ?: return@filter false
+            val formattedEventDate = dateFormat.format(dateFormat.parse(eventDateSubStr) ?: return@filter false)
+            val formattedRelativeDate = dateFormat.format(relativeLocalDate)
 
-            eventDate.compareTo(format.parse(format.format(localDate))) == 0
+            formattedEventDate == formattedRelativeDate
         }.sortedBy { it.timeStart }
     }
 }

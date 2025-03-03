@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
+    alias(libs.plugins.kotlin.serialization)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
 }
@@ -60,6 +61,7 @@ dependencies {
     implementation(libs.accompanist.systemuicontroller)
     kapt(libs.room.compiler)
     implementation(libs.androidx.room.ktx)
+    implementation(libs.kotlin.serialization.json)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

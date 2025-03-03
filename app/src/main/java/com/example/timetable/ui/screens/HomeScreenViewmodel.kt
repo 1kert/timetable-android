@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.example.timetable.AppRepository
 import com.example.timetable.data.TimetableEvent
+import com.example.timetable.ui.NavigationRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -42,10 +43,10 @@ class HomeScreenViewmodel @Inject constructor(
 
     fun onNextGroup() {
         var current = uiState.value.selectedGroup
-        val keys = groups.keys.toList()
-        var index = keys.indexOf(current) + 1
-        if (index >= keys.size) index = 0
-        current = keys[index]
+        val availableGroups = groups.keys.toList()
+        var newIndex = availableGroups.indexOf(current) + 1
+        if (newIndex >= availableGroups.size) newIndex = 0
+        current = availableGroups[newIndex]
         fetchTables(groups[current].orEmpty())
         _uiState.update { it.copy(selectedGroup = current) }
     }
@@ -74,28 +75,22 @@ class HomeScreenViewmodel @Inject constructor(
         return formattedDate
     }
 
-    fun navigate(navHostController: NavHostController, navigationState: NavigationState) {
+    fun navigate(navHostController: NavHostController, navigationRoute: NavigationRoute) {
         _uiState.update {
-            it.copy(currentNavigation = navigationState)
+            it.copy(currentNavigation = navigationRoute)
         }
-        navHostController.navigate(navigationState.toString())
+        navHostController.navigate(navigationRoute)
     }
 }
 
 data class TimetableViewState(
     val events: List<List<TimetableEvent>> = listOf(),
     val selectedGroup: String = "ta23",
-    val currentNavigation: NavigationState = NavigationState.Student
+    val currentNavigation: NavigationRoute = NavigationRoute.StudentScreen
 )
 
-enum class NavigationState {
-    Student,
-    Teacher,
-    Room
-}
-
 private val groups = mapOf(
-    "ta23" to "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroups=7597",
-    "tak23" to "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroups=7596",
-    "tak24" to "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroups=9329"
+    "ta23" to "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroupUuid=50b463db-a5d9-484d-a028-b7c77344d038",
+    "tak23" to "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroupUuid=e3f24c2e-ed4a-49b8-92db-7781c3498c93",
+    "tak24" to "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroupUuid=4b26d1e5-11ac-4c63-840e-46c450c529ee"
 )

@@ -13,7 +13,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
-import com.example.timetable.ui.screens.HomeScreen
+import com.example.timetable.ui.TabNavigation
 import com.example.timetable.ui.theme.TimetableTheme
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.HiltAndroidApp
@@ -36,7 +36,7 @@ class MainActivity : ComponentActivity() {
                         .fillMaxSize()
                         .background(MaterialTheme.colorScheme.primary)
                 ) {
-                    HomeScreen()
+                    TabNavigation()
                 }
             }
         }

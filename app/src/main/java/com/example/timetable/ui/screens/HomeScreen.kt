@@ -1,69 +1,39 @@
 package com.example.timetable.ui.screens
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation.compose.rememberNavController
-import com.example.timetable.components.AppBottomBar
 import com.example.timetable.components.AppTopBar
 import com.example.timetable.components.EventCard
 import com.example.timetable.data.TimetableEvent
 
 @Composable
 fun HomeScreen(
-    appViewmodel: HomeScreenViewmodel = hiltViewModel()
+    uiState: TimetableViewState,
+    getDayName: (List<TimetableEvent>) -> String,
+    onNextGroup: () -> Unit
 ) {
-    val uiState by appViewmodel.uiState.collectAsState()
-    val navHostController = rememberNavController()
-
-    Scaffold(
-        modifier = Modifier
-            .fillMaxSize()
-            .navigationBarsPadding(),
-        bottomBar = {
-            AppBottomBar(
-                currentNavigationState = uiState.currentNavigation,
-                onTeacherClick = { appViewmodel.navigate(navHostController, NavigationState.Teacher) },
-                onStudentClick = { appViewmodel.navigate(navHostController, NavigationState.Student) },
-                onRoomClick = { appViewmodel.navigate(navHostController, NavigationState.Room) },
-            )
-        }
-    ) { contentPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(contentPadding)
-        ) {
-            MainAppContent(
-                uiState = uiState,
-                getDayName = appViewmodel::getDayName,
-                onNextGroup = appViewmodel::onNextGroup
-            )
-        }
+    Box(modifier = Modifier.fillMaxSize()) {
+        MainAppContent(
+            uiState = uiState,
+            getDayName = getDayName,
+            onNextGroup = onNextGroup
+        )
     }
 }
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MainAppContent(
     uiState: TimetableViewState,
     onNextGroup: () -> Unit,
     getDayName: (List<TimetableEvent>) -> String,
 ) {
-    Text("")
-
     HorizontalPager(
         state = rememberPagerState { uiState.events.size },
         modifier = Modifier.fillMaxSize()

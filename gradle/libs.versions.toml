@@ -15,8 +15,10 @@ hiltNavigationCompose = "1.2.0"
 navigationCompose = "2.8.0-alpha10"
 roomAndroid = "2.6.1"
 runtimeLivedata = "1.6.8"
+kotlin-serialization = "1.6.3"
 
 [libraries]
+kotlin-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlin-serialization"}
 accompanist-systemuicontroller = { module = "com.google.accompanist:accompanist-systemuicontroller", version.ref = "accompanistSystemuicontroller" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
@@ -47,4 +49,5 @@ room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomAnd
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin"}
 

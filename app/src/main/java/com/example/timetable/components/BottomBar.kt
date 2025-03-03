@@ -16,13 +16,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.timetable.R
-import com.example.timetable.ui.screens.NavigationState
+import com.example.timetable.ui.NavigationRoute
+import com.example.timetable.ui.screens.SelectionScreenType
 import com.example.timetable.ui.theme.TimetableTheme
 import com.example.timetable.ui.theme.navigationIconSelected
 
 @Composable
 fun AppBottomBar(
-    currentNavigationState: NavigationState,
+    currentNavigationState: NavigationRoute,
     onTeacherClick: () -> Unit,
     onStudentClick: () -> Unit,
     onRoomClick: () -> Unit
@@ -40,19 +41,19 @@ fun AppBottomBar(
         ) {
             NavigationButton(
                 icon = painterResource(R.drawable.ic_student),
-                isSelected = currentNavigationState == NavigationState.Student,
+                isSelected = currentNavigationState == NavigationRoute.StudentScreen,
                 onClick = onStudentClick
             )
 
             NavigationButton(
                 icon = painterResource(R.drawable.ic_teacher),
-                isSelected = currentNavigationState == NavigationState.Teacher,
+                isSelected = currentNavigationState == NavigationRoute.SelectionScreen(SelectionScreenType.TEACHER),
                 onClick = onTeacherClick
             )
 
             NavigationButton(
                 icon = painterResource(R.drawable.ic_room),
-                isSelected = currentNavigationState == NavigationState.Room,
+                isSelected = currentNavigationState == NavigationRoute.SelectionScreen(SelectionScreenType.ROOM),
                 onClick = onRoomClick
             )
         }
@@ -85,7 +86,7 @@ private fun AppBottomBarPreview() {
             onTeacherClick = {},
             onStudentClick = {},
             onRoomClick = {},
-            currentNavigationState = NavigationState.Student
+            currentNavigationState = NavigationRoute.StudentScreen
         )
     }
 }
