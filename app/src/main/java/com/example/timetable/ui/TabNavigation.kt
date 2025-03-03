@@ -15,14 +15,14 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.example.timetable.components.AppBottomBar
 import com.example.timetable.ui.screens.HomeScreen
-import com.example.timetable.ui.screens.HomeScreenViewmodel
+import com.example.timetable.ui.screens.AppViewModel
 import com.example.timetable.ui.screens.SelectionScreen
 import com.example.timetable.ui.screens.SelectionScreenType
 import kotlinx.serialization.Serializable
 
 @Composable
 fun TabNavigation(
-    appViewmodel: HomeScreenViewmodel = hiltViewModel()
+    appViewmodel: AppViewModel = hiltViewModel()
 ) {
     val uiState by appViewmodel.uiState.collectAsState()
     val navController = rememberNavController()

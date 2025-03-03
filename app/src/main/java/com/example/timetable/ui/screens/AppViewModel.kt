@@ -17,7 +17,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
-class HomeScreenViewmodel @Inject constructor(
+class AppViewModel @Inject constructor(
     private val appRepository: AppRepository
 ) : ViewModel() {
     private val locale = Locale.forLanguageTag("et")
