@@ -38,11 +38,11 @@ fun HomeScreen(
                 onRoomClick = { appViewmodel.navigate(navHostController, NavigationState.Room) },
             )
         }
-    ) { innerPadding ->
+    ) { contentPadding ->
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
+                .padding(contentPadding)
         ) {
             MainAppContent(
                 uiState = uiState,
