@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -26,6 +25,8 @@ fun TabNavigation(
     appViewmodel: AppViewModel = hiltViewModel()
 ) {
     val uiState by appViewmodel.timetableState.collectAsStateWithLifecycle()
+    val teacherState by appViewmodel.teacherState.collectAsStateWithLifecycle()
+    val roomState by appViewmodel.roomState.collectAsStateWithLifecycle()
     val navController = rememberNavController()
 
     Scaffold (
@@ -57,7 +58,12 @@ fun TabNavigation(
             composable<NavigationRoute.SelectionScreen> {
                 val args = it.toRoute<NavigationRoute.SelectionScreen>()
 
-                SelectionScreen(selectionScreenType = args.selectionScreenType)
+                SelectionScreen(
+                    selectionScreenType = args.selectionScreenType,
+                    onInfoCardClick = { screenType, uuid -> navController }, // todo: navigation to teacher or room timetable screen
+                    teacherState = teacherState,
+                    roomState = roomState
+                )
             }
         }
     }

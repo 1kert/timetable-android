@@ -24,7 +24,7 @@ class AppRepository @Inject constructor() {
     val teachers = _teachers.asStateFlow()
 
     suspend fun fetchTables(url: String) {
-        var allEvents = listOf<TimetableEvent>()
+        val allEvents: List<TimetableEvent>
         try {
             val response = apiService.getTimetable(url)
             allEvents = response.timetableEvent ?: listOf()
@@ -36,7 +36,7 @@ class AppRepository @Inject constructor() {
         filterAllTables(allEvents)
     }
 
-    suspend fun fetchAllRooms() {
+    suspend fun fetchAllRooms() { // todo: sort
         try {
             val response = apiService.getRooms()
             _rooms.value = response
@@ -46,7 +46,7 @@ class AppRepository @Inject constructor() {
         }
     }
 
-    suspend fun fetchAllTeachers() {
+    suspend fun fetchAllTeachers() { // todo: sort
         try {
             val response = apiService.getTeachers()
             _teachers.value = response
