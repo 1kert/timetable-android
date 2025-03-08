@@ -10,9 +10,7 @@ import com.example.timetable.data.TeacherModel
 import com.example.timetable.data.TimetableEvent
 import com.example.timetable.ui.NavigationRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -35,23 +33,25 @@ class AppViewModel @Inject constructor(
 
     init {
         fetchTables(groups[timetableState.value.selectedGroup].orEmpty())
+        viewModelScope.launch { appRepository.fetchAllRooms() }
+        viewModelScope.launch { appRepository.fetchAllTeachers() }
         observeEvents()
     }
 
     private fun fetchTables(groupUuid: String) = viewModelScope.launch { appRepository.fetchTables(groupUuid) }
 
     private fun observeEvents() {
-        viewModelScope.launch {
-            appRepository.weekEvents.collect { collected ->
-                _timetableState.update {
-                    it.copy(events = collected)
-                }
-            }
-        }
-
-        viewModelScope.launch {
-            appRepository
-        }
+        combine(
+            appRepository.weekEvents,
+            appRepository.rooms,
+            appRepository.teachers
+        ) { events, rooms, teachers ->
+            Triple(events, rooms, teachers)
+        }.onEach { collected ->
+            _timetableState.update { it.copy(events = collected.first) }
+            _roomState.value = collected.second
+            _teacherState.value = collected.third
+        }.launchIn(viewModelScope)
     }
 
     fun onNextGroup() {

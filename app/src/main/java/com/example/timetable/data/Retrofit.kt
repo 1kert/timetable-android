@@ -22,4 +22,7 @@ interface ApiService {
 
     @GET("/hois_back/schoolBoard/38/room/timetables")
     suspend fun getRooms(): List<RoomModel>
+
+    @GET("/hois_back/schoolBoard/38/teacher/timetables")
+    suspend fun getTeachers(): List<TeacherModel>
 }

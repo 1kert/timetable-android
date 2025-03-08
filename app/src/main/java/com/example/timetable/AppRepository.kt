@@ -46,6 +46,16 @@ class AppRepository @Inject constructor() {
         }
     }
 
+    suspend fun fetchAllTeachers() {
+        try {
+            val response = apiService.getTeachers()
+            _teachers.value = response
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return
+        }
+    }
+
     private fun filterAllTables(allEvents: List<TimetableEvent>) {
         val events = mutableListOf<List<TimetableEvent>>()
         for (i in 0..120) { // todo: fix dog shit complexity
