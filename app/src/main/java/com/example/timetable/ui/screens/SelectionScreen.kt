@@ -1,31 +1,54 @@
 package com.example.timetable.ui.screens
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.lazy.grid.*
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.timetable.R
+import com.example.timetable.ui.theme.TimetableTheme
+import com.example.timetable.ui.theme.roomInfoCard
+import com.example.timetable.ui.theme.teacherInfoCard
 
 @Composable
 fun SelectionScreen(
     appViewModel: AppViewModel = hiltViewModel(),
     selectionScreenType: SelectionScreenType
 ) {
+    val roomState by appViewModel.roomState.collectAsStateWithLifecycle()
+    val teacherState by appViewModel.teacherState.collectAsStateWithLifecycle()
+
 }
 
 @Composable
 private fun SelectionScreenContent(
     selectionScreenType: SelectionScreenType,
-    buttonList: List<Pair<String, String>>
+    buttonList: List<Pair<String, String>>,
+    onClick: (SelectionScreenType, String) -> Unit
 ) {
-    Column {
-        Text (
-            text = when(selectionScreenType) {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Text(
+            text = when (selectionScreenType) {
                 SelectionScreenType.ROOM -> stringResource(R.string.select_room)
                 SelectionScreenType.TEACHER -> stringResource(R.string.select_teacher)
             },
@@ -34,14 +57,74 @@ private fun SelectionScreenContent(
             color = Color.White
         )
 
-        LazyVerticalGrid (
+        LazyVerticalGrid(
             columns = GridCells.Fixed(2),
-            state = rememberLazyGridState()
+            state = rememberLazyGridState(),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
             items(buttonList, key = { it.first }) {
-
+                InfoCard(
+                    text = it.first,
+                    onClick = { onClick(selectionScreenType, it.second) },
+                    selectionScreenType = SelectionScreenType.ROOM
+                )
             }
         }
+    }
+}
+
+@Composable
+private fun InfoCard(
+    text: String,
+    selectionScreenType: SelectionScreenType,
+    onClick: () -> Unit
+) {
+    Button(
+        onClick = onClick,
+        shape = RoundedCornerShape(10.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = when (selectionScreenType) {
+                SelectionScreenType.ROOM -> roomInfoCard
+                SelectionScreenType.TEACHER -> teacherInfoCard
+            }
+        ),
+        modifier = Modifier
+            .height(60.dp)
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = text,
+            fontSize = 12.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun InfoCardPreview() {
+    TimetableTheme {
+        InfoCard(
+            text = "some text here",
+            onClick = {},
+            selectionScreenType = SelectionScreenType.ROOM
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun SelectionScreenPreview() {
+    TimetableTheme {
+        SelectionScreenContent(
+            selectionScreenType = SelectionScreenType.ROOM,
+            buttonList = List(20) {
+                Pair("roomcode $it", "")
+            },
+            onClick = { _, _ -> }
+        )
     }
 }
 
