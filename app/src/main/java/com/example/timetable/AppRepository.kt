@@ -1,6 +1,8 @@
 package com.example.timetable
 
 import com.example.timetable.data.Retrofit
+import com.example.timetable.data.RoomModel
+import com.example.timetable.data.TeacherModel
 import com.example.timetable.data.TimetableEvent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -11,11 +13,18 @@ import javax.inject.Inject
 
 class AppRepository @Inject constructor() {
     private val apiService = Retrofit.api
-    private var allEvents = listOf<TimetableEvent>()
+
     private val _weekEvents = MutableStateFlow(listOf<List<TimetableEvent>>())
     val weekEvents = _weekEvents.asStateFlow()
 
+    private val _rooms = MutableStateFlow(listOf<RoomModel>())
+    val rooms = _rooms.asStateFlow()
+
+    private val _teachers = MutableStateFlow(listOf<TeacherModel>())
+    val teachers = _teachers.asStateFlow()
+
     suspend fun fetchTables(url: String) {
+        var allEvents = listOf<TimetableEvent>()
         try {
             val response = apiService.getTimetable(url)
             allEvents = response.timetableEvent ?: listOf()
@@ -25,6 +34,16 @@ class AppRepository @Inject constructor() {
         }
 
         filterAllTables(allEvents)
+    }
+
+    suspend fun fetchAllRooms() {
+        try {
+            val response = apiService.getRooms()
+            _rooms.value = response
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return
+        }
     }
 
     private fun filterAllTables(allEvents: List<TimetableEvent>) {

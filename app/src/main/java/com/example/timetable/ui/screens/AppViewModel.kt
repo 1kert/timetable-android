@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavHostController
 import com.example.timetable.AppRepository
+import com.example.timetable.data.RoomModel
+import com.example.timetable.data.TeacherModel
 import com.example.timetable.data.TimetableEvent
 import com.example.timetable.ui.NavigationRoute
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,34 +23,45 @@ class AppViewModel @Inject constructor(
     private val appRepository: AppRepository
 ) : ViewModel() {
     private val locale = Locale.forLanguageTag("et")
-    private val _uiState = MutableStateFlow(TimetableViewState())
-    val uiState = _uiState.asStateFlow()
+
+    private val _timetableState = MutableStateFlow(TimetableViewState())
+    val timetableState = _timetableState.asStateFlow()
+
+    private val _roomState = MutableStateFlow(listOf<RoomModel>())
+    val roomState = _roomState.asStateFlow()
+
+    private val _teacherState = MutableStateFlow(listOf<TeacherModel>())
+    val teacherState = _teacherState.asStateFlow()
 
     init {
-        fetchTables(groups[uiState.value.selectedGroup].orEmpty())
+        fetchTables(groups[timetableState.value.selectedGroup].orEmpty())
         observeEvents()
     }
 
-    private fun fetchTables(url: String) = viewModelScope.launch { appRepository.fetchTables(url) }
+    private fun fetchTables(groupUuid: String) = viewModelScope.launch { appRepository.fetchTables(groupUuid) }
 
     private fun observeEvents() {
         viewModelScope.launch {
             appRepository.weekEvents.collect { collected ->
-                _uiState.update {
+                _timetableState.update {
                     it.copy(events = collected)
                 }
             }
         }
+
+        viewModelScope.launch {
+            appRepository
+        }
     }
 
     fun onNextGroup() {
-        var current = uiState.value.selectedGroup
+        var current = timetableState.value.selectedGroup
         val availableGroups = groups.keys.toList()
         var newIndex = availableGroups.indexOf(current) + 1
         if (newIndex >= availableGroups.size) newIndex = 0
         current = availableGroups[newIndex]
         fetchTables(groups[current].orEmpty())
-        _uiState.update { it.copy(selectedGroup = current) }
+        _timetableState.update { it.copy(selectedGroup = current) }
     }
 
     fun getDayName(events: List<TimetableEvent>): String {
@@ -76,7 +89,7 @@ class AppViewModel @Inject constructor(
     }
 
     fun navigate(navHostController: NavHostController, navigationRoute: NavigationRoute) {
-        _uiState.update {
+        _timetableState.update {
             it.copy(currentNavigation = navigationRoute)
         }
         navHostController.navigate(navigationRoute)
@@ -90,7 +103,7 @@ data class TimetableViewState(
 )
 
 private val groups = mapOf(
-    "ta23" to "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroupUuid=50b463db-a5d9-484d-a028-b7c77344d038",
-    "tak23" to "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroupUuid=e3f24c2e-ed4a-49b8-92db-7781c3498c93",
-    "tak24" to "hois_back/schoolBoard/38/timetableByGroup?lang=ET&studentGroupUuid=4b26d1e5-11ac-4c63-840e-46c450c529ee"
+    "ta23" to "50b463db-a5d9-484d-a028-b7c77344d038",
+    "tak23" to "e3f24c2e-ed4a-49b8-92db-7781c3498c93",
+    "tak24" to "4b26d1e5-11ac-4c63-840e-46c450c529ee"
 )

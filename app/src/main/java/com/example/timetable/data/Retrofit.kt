@@ -3,7 +3,7 @@ package com.example.timetable.data
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-import retrofit2.http.Url
+import retrofit2.http.Query
 
 object Retrofit {
     private const val URL = "https://tahveltp.edu.ee"
@@ -17,6 +17,9 @@ object Retrofit {
 }
 
 interface ApiService {
-    @GET
-    suspend fun getTimetable(@Url url: String): Timetables
+    @GET("hois_back/schoolBoard/38/timetableByGroup?lang=ET")
+    suspend fun getTimetable(@Query("studentGroupUuid") uuid: String): Timetables
+
+    @GET("/hois_back/schoolBoard/38/room/timetables")
+    suspend fun getRooms(): List<RoomModel>
 }
