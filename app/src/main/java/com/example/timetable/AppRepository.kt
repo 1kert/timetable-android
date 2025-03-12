@@ -23,10 +23,16 @@ class AppRepository @Inject constructor() {
     private val _teachers = MutableStateFlow(listOf<TeacherModel>())
     val teachers = _teachers.asStateFlow()
 
-    suspend fun fetchTables(url: String) {
+    private val _teacherEvents = MutableStateFlow(listOf<TimetableEvent>())
+    val teacherEvents = _teacherEvents.asStateFlow()
+
+    private val _roomEvents = MutableStateFlow(listOf<TimetableEvent>())
+    val roomEvents = _roomEvents.asStateFlow()
+
+    suspend fun getTables(url: String) {
         val allEvents: List<TimetableEvent>
         try {
-            val response = apiService.getTimetable(url)
+            val response = apiService.fetchTimetable(url)
             allEvents = response.timetableEvent ?: listOf()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -36,23 +42,39 @@ class AppRepository @Inject constructor() {
         filterAllTables(allEvents)
     }
 
-    suspend fun fetchAllRooms() { // todo: sort
+    suspend fun getAllRooms() { // todo: sort
         try {
-            val response = apiService.getRooms()
+            val response = apiService.fetchAllRooms()
             _rooms.value = response
         } catch (e: Exception) {
             e.printStackTrace()
-            return
         }
     }
 
-    suspend fun fetchAllTeachers() { // todo: sort
+    suspend fun getAllTeachers() { // todo: sort
         try {
-            val response = apiService.getTeachers()
+            val response = apiService.fetchAllTeachers()
             _teachers.value = response
         } catch (e: Exception) {
             e.printStackTrace()
-            return
+        }
+    }
+
+    suspend fun getTeacherEvents(uuid: String) { // todo: sort
+        try {
+            val events = apiService.fetchTeacherEvents(uuid).timetableEvent
+            _teacherEvents.value = events.orEmpty()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun getRoomEvents(uuid: String) { // todo: sort
+        try {
+            val events = apiService.fetchRoomEvents(uuid).timetableEvent
+            _roomEvents.value = events.orEmpty()
+        } catch (e: Exception) {
+            e.printStackTrace()
         }
     }
 

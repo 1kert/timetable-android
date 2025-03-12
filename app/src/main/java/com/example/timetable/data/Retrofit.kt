@@ -18,11 +18,17 @@ object Retrofit {
 
 interface ApiService {
     @GET("hois_back/schoolBoard/38/timetableByGroup?lang=ET")
-    suspend fun getTimetable(@Query("studentGroupUuid") uuid: String): Timetables
+    suspend fun fetchTimetable(@Query("studentGroupUuid") uuid: String): Timetables
 
     @GET("/hois_back/schoolBoard/38/room/timetables")
-    suspend fun getRooms(): List<RoomModel>
+    suspend fun fetchAllRooms(): List<RoomModel>
 
     @GET("/hois_back/schoolBoard/38/teacher/timetables")
-    suspend fun getTeachers(): List<TeacherModel>
+    suspend fun fetchAllTeachers(): List<TeacherModel>
+
+    @GET("/hois_back/schoolBoard/38/timetableByTeacher?lang=ET")
+    suspend fun fetchTeacherEvents(@Query("teacherUuid") uuid: String): Timetables
+
+    @GET("/hois_back/schoolBoard/38/timetableByRoom?lang=ET")
+    suspend fun fetchRoomEvents(@Query("roomUuid") uuid: String): Timetables
 }

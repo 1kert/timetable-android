@@ -31,27 +31,53 @@ class AppViewModel @Inject constructor(
     private val _teacherState = MutableStateFlow(listOf<TeacherModel>())
     val teacherState = _teacherState.asStateFlow()
 
+    private val _teacherEvents = MutableStateFlow(listOf<TimetableEvent>())
+    val teacherEvents = _teacherEvents.asStateFlow()
+
+    private val _roomEvents = MutableStateFlow(listOf<TimetableEvent>())
+    val roomEvents = _roomEvents.asStateFlow()
+
     init {
         fetchTables(groups[timetableState.value.selectedGroup].orEmpty())
-        viewModelScope.launch { appRepository.fetchAllRooms() }
-        viewModelScope.launch { appRepository.fetchAllTeachers() }
+        viewModelScope.launch { appRepository.getAllRooms() }
+        viewModelScope.launch { appRepository.getAllTeachers() }
         observeEvents()
     }
 
-    private fun fetchTables(groupUuid: String) = viewModelScope.launch { appRepository.fetchTables(groupUuid) }
+    private fun fetchTables(groupUuid: String) = viewModelScope.launch { appRepository.getTables(groupUuid) }
 
     private fun observeEvents() {
         combine(
             appRepository.weekEvents,
             appRepository.rooms,
-            appRepository.teachers
-        ) { events, rooms, teachers ->
-            Triple(events, rooms, teachers)
+            appRepository.teachers,
+            appRepository.roomEvents,
+            appRepository.teacherEvents
+        ) { events, rooms, teachers, roomEvents, teacherEvents ->
+            CombinedFlowState(
+                events = events,
+                rooms = rooms,
+                teachers = teachers,
+                roomEvents = roomEvents,
+                teacherEvents = teacherEvents
+            )
         }.onEach { collected ->
-            _timetableState.update { it.copy(events = collected.first) }
-            _roomState.value = collected.second
-            _teacherState.value = collected.third
+            _timetableState.update { it.copy(events = collected.events) }
+            _roomState.value = collected.rooms
+            _teacherState.value = collected.teachers
+            _roomEvents.value = collected.roomEvents
+            _teacherEvents.value = collected.teacherEvents
         }.launchIn(viewModelScope)
+    }
+
+    fun getTeacherEvents(uuid: String) {
+        _teacherEvents.value = listOf()
+        viewModelScope.launch { appRepository.getTeacherEvents(uuid) }
+    }
+
+    fun getRoomEvents(uuid: String) {
+        _roomEvents.value = listOf()
+        viewModelScope.launch { appRepository.getRoomEvents(uuid) }
     }
 
     fun onNextGroup() {
@@ -100,6 +126,14 @@ data class TimetableViewState(
     val events: List<List<TimetableEvent>> = listOf(),
     val selectedGroup: String = "ta23",
     val currentNavigation: NavigationRoute = NavigationRoute.StudentScreen
+)
+
+private data class CombinedFlowState (
+    val events: List<List<TimetableEvent>>,
+    val rooms: List<RoomModel>,
+    val teachers: List<TeacherModel>,
+    val roomEvents: List<TimetableEvent>,
+    val teacherEvents: List<TimetableEvent>
 )
 
 private val groups = mapOf(

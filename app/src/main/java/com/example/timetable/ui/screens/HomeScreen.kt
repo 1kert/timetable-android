@@ -1,16 +1,13 @@
 package com.example.timetable.ui.screens
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.timetable.components.AppTopBar
-import com.example.timetable.components.EventCard
+import com.example.timetable.components.EventsList
 import com.example.timetable.data.TimetableEvent
 
 @Composable
@@ -29,7 +26,7 @@ fun HomeScreen(
 }
 
 @Composable
-fun MainAppContent(
+private fun MainAppContent(
     uiState: TimetableViewState,
     onNextGroup: () -> Unit,
     getDayName: (List<TimetableEvent>) -> String,
@@ -48,7 +45,7 @@ fun MainAppContent(
 }
 
 @Composable
-fun TimetablePage(
+private fun TimetablePage(
     events: List<TimetableEvent>,
     currentGroup: String,
     getDayName: (List<TimetableEvent>) -> String,
@@ -68,18 +65,6 @@ fun TimetablePage(
             onNextGroup = onNextGroup
         )
 
-        LazyColumn(
-            state = rememberLazyListState(),
-            verticalArrangement = Arrangement.spacedBy(8.dp),
-            modifier = Modifier.fillMaxSize()
-        ) {
-            items(events) { event ->
-                EventCard(event)
-            }
-
-            item {
-                Spacer(Modifier)
-            }
-        }
+        EventsList(events)
     }
 }

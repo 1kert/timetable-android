@@ -29,7 +29,7 @@ fun SelectionScreen(
     roomState: List<RoomModel>,
     teacherState: List<TeacherModel>,
     selectionScreenType: SelectionScreenType,
-    onInfoCardClick: (SelectionScreenType, String) -> Unit
+    onInfoCardClick: (SelectionScreenType, uuid: String, title: String) -> Unit
 ) {
     val list = when (selectionScreenType) {
         SelectionScreenType.ROOM -> roomState.map { Pair(it.code, it.uuid) }
@@ -47,7 +47,7 @@ fun SelectionScreen(
 private fun SelectionScreenContent(
     selectionScreenType: SelectionScreenType,
     buttonList: List<Pair<String, String>>,
-    onClick: (SelectionScreenType, String) -> Unit
+    onClick: (SelectionScreenType, uuid: String, title: String) -> Unit
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -75,7 +75,7 @@ private fun SelectionScreenContent(
             items(buttonList, key = { it.first }) {
                 InfoCard(
                     text = it.first,
-                    onClick = { onClick(selectionScreenType, it.second) },
+                    onClick = { onClick(selectionScreenType, it.second, it.first) },
                     selectionScreenType = selectionScreenType
                 )
             }
@@ -132,7 +132,7 @@ private fun SelectionScreenPreview() {
             buttonList = List(20) {
                 Pair("roomcode $it", "")
             },
-            onClick = { _, _ -> }
+            onClick = { _, _, _-> }
         )
     }
 }
