@@ -76,35 +76,22 @@ class AppRepository @Inject constructor() {
     }
 
     private fun filterAllTables(allEvents: List<TimetableEvent>): List<List<TimetableEvent>> {
-        val events = mutableListOf<List<TimetableEvent>>()
-        for (i in 0..120) { // todo: fix dog shit complexity
-            val filteredDay = filterTablesByDay(allEvents = allEvents, days = i)
-            if (filteredDay.isNotEmpty()) events.add(filteredDay)
-        }
-        return events
-    }
+        val relativeDayEvents = sortedMapOf<Long, MutableList<TimetableEvent>>()
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd", Locale.forLanguageTag("et"))
+        val currentDate = dateFormat.parse(dateFormat.format(Calendar.getInstance().time)) ?: return emptyList()
 
-    private fun filterTablesByDay(
-        allEvents: List<TimetableEvent>,
-        days: Int
-    ): List<TimetableEvent> {
-        return allEvents.filter { event ->
-            if (event.date == null) return@filter false
-
-            val relativeLocalDate = Calendar.getInstance().apply {
-                add(Calendar.DAY_OF_MONTH, days)
-            }.time
+        allEvents.forEach { event ->
+            if (event.date == null) return@forEach
 
             val eventDateSubStr = event.date.substring(0, event.date.indexOf('T'))
-            val dateFormat = SimpleDateFormat(
-                "yyyy-MM-dd",
-                Locale.forLanguageTag("et")
-            )
+            val eventDate = dateFormat.parse(eventDateSubStr) ?: return@forEach
+            val dateDifference = eventDate.time - currentDate.time
+            val dayDifference = dateDifference / 86400000
+            if (!relativeDayEvents.containsKey(dayDifference))
+                relativeDayEvents[dayDifference] = mutableListOf()
+            relativeDayEvents[dayDifference]?.add(event)
+        }
 
-            val formattedEventDate = dateFormat.format(dateFormat.parse(eventDateSubStr) ?: return@filter false)
-            val formattedRelativeDate = dateFormat.format(relativeLocalDate)
-
-            formattedEventDate == formattedRelativeDate
-        }.sortedBy { it.timeStart }
+        return relativeDayEvents.toList().filter { it.first >= 0 }.map { it.second.sortedBy { innerList -> innerList.timeStart } }
     }
 }
