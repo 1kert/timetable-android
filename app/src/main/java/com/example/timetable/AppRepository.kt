@@ -23,23 +23,38 @@ class AppRepository @Inject constructor() {
     private val _teachers = MutableStateFlow(listOf<TeacherModel>())
     val teachers = _teachers.asStateFlow()
 
-    private val _teacherEvents = MutableStateFlow(listOf<TimetableEvent>())
+    private val _teacherEvents = MutableStateFlow(listOf<List<TimetableEvent>>())
     val teacherEvents = _teacherEvents.asStateFlow()
 
-    private val _roomEvents = MutableStateFlow(listOf<TimetableEvent>())
+    private val _roomEvents = MutableStateFlow(listOf<List<TimetableEvent>>())
     val roomEvents = _roomEvents.asStateFlow()
 
     suspend fun getTables(url: String) {
-        val allEvents: List<TimetableEvent>
         try {
             val response = apiService.fetchTimetable(url)
-            allEvents = response.timetableEvent ?: listOf()
+            val allEvents = response.timetableEvent.orEmpty()
+            _weekEvents.value = filterAllTables(allEvents)
         } catch (e: Exception) {
             e.printStackTrace()
-            return
         }
+    }
 
-        filterAllTables(allEvents)
+    suspend fun getTeacherEvents(uuid: String) {
+        try {
+            val allEvents = apiService.fetchTeacherEvents(uuid).timetableEvent.orEmpty()
+            _teacherEvents.value = filterAllTables(allEvents)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    suspend fun getRoomEvents(uuid: String) {
+        try {
+            val allEvents = apiService.fetchRoomEvents(uuid).timetableEvent.orEmpty()
+            _roomEvents.value = filterAllTables(allEvents)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
     suspend fun getAllRooms() { // todo: sort
@@ -60,31 +75,13 @@ class AppRepository @Inject constructor() {
         }
     }
 
-    suspend fun getTeacherEvents(uuid: String) { // todo: sort
-        try {
-            val events = apiService.fetchTeacherEvents(uuid).timetableEvent
-            _teacherEvents.value = events.orEmpty()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    suspend fun getRoomEvents(uuid: String) { // todo: sort
-        try {
-            val events = apiService.fetchRoomEvents(uuid).timetableEvent
-            _roomEvents.value = events.orEmpty()
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun filterAllTables(allEvents: List<TimetableEvent>) {
+    private fun filterAllTables(allEvents: List<TimetableEvent>): List<List<TimetableEvent>> {
         val events = mutableListOf<List<TimetableEvent>>()
         for (i in 0..120) { // todo: fix dog shit complexity
             val filteredDay = filterTablesByDay(allEvents = allEvents, days = i)
             if (filteredDay.isNotEmpty()) events.add(filteredDay)
         }
-        _weekEvents.value = events.toList()
+        return events
     }
 
     private fun filterTablesByDay(

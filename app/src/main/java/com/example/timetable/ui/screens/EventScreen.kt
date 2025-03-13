@@ -8,10 +8,10 @@ import com.example.timetable.data.TimetableEvent
 @Composable
 fun EventScreen(
     title: String,
-    events: List<TimetableEvent>
+    events: List<List<TimetableEvent>>
 ) {
     Column {
         Text(text = title)
-        Text(text = events.joinToString(" ") { it.name.toString() })
+        Text(text = events.firstOrNull().orEmpty().joinToString(", ") { it.name.toString() })
     }
 }

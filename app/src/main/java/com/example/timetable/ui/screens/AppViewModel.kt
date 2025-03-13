@@ -31,10 +31,10 @@ class AppViewModel @Inject constructor(
     private val _teacherState = MutableStateFlow(listOf<TeacherModel>())
     val teacherState = _teacherState.asStateFlow()
 
-    private val _teacherEvents = MutableStateFlow(listOf<TimetableEvent>())
+    private val _teacherEvents = MutableStateFlow(listOf<List<TimetableEvent>>())
     val teacherEvents = _teacherEvents.asStateFlow()
 
-    private val _roomEvents = MutableStateFlow(listOf<TimetableEvent>())
+    private val _roomEvents = MutableStateFlow(listOf<List<TimetableEvent>>())
     val roomEvents = _roomEvents.asStateFlow()
 
     init {
@@ -132,8 +132,8 @@ private data class CombinedFlowState (
     val events: List<List<TimetableEvent>>,
     val rooms: List<RoomModel>,
     val teachers: List<TeacherModel>,
-    val roomEvents: List<TimetableEvent>,
-    val teacherEvents: List<TimetableEvent>
+    val roomEvents: List<List<TimetableEvent>>,
+    val teacherEvents: List<List<TimetableEvent>>
 )
 
 private val groups = mapOf(
