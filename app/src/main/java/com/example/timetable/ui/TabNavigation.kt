@@ -87,7 +87,8 @@ fun TabNavigation(
                     events = when(args.screenType) {
                         SelectionScreenType.ROOM -> roomEvents
                         SelectionScreenType.TEACHER -> teacherEvents
-                    }
+                    },
+                    getDateString = appViewmodel::getDayName
                 )
             }
         }

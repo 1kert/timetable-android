@@ -15,9 +15,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
-import com.example.timetable.components.EventCard
+import com.example.timetable.components.EventsList
 import com.example.timetable.data.TimetableEvent
 import com.example.timetable.ui.theme.TimetableTheme
+import com.example.timetable.ui.theme.eventHorizontalPadding
+import com.example.timetable.ui.theme.eventTopPadding
 
 @Composable
 fun EventScreen(
@@ -25,7 +27,7 @@ fun EventScreen(
     events: List<List<TimetableEvent>>,
     getDateString: (events: List<TimetableEvent>) -> String
 ) {
-    var dateString by remember { mutableStateOf("some date string") } // todo: should be empty
+    var dateString by remember { mutableStateOf("") }
 
     Scaffold(
         modifier = Modifier
@@ -63,21 +65,23 @@ fun EventScreen(
             }
         }
     ) { contentPadding ->
+        val pagerState = rememberPagerState { events.size }
+
         HorizontalPager(
-            state = rememberPagerState { events.size },
+            state = pagerState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
         ) { page ->
-            LaunchedEffect(Unit) {
-                dateString = getDateString(events[page])
-            }
+            LaunchedEffect(pagerState.targetPage) { dateString = getDateString(events[pagerState.targetPage]) }
 
-            Column {
-                val todayEvents = events[page]
-                todayEvents.forEach {
-                    EventCard(it)
-                }
+            Box (
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(top = eventTopPadding)
+                    .padding(horizontal = eventHorizontalPadding)
+            ) {
+                EventsList(events[page])
             }
         }
     }

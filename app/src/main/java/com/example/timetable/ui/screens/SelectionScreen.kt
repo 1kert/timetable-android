@@ -21,6 +21,7 @@ import com.example.timetable.R
 import com.example.timetable.data.RoomModel
 import com.example.timetable.data.TeacherModel
 import com.example.timetable.ui.theme.TimetableTheme
+import com.example.timetable.ui.theme.eventBottomPadding
 import com.example.timetable.ui.theme.roomInfoCard
 import com.example.timetable.ui.theme.teacherInfoCard
 
@@ -70,7 +71,8 @@ private fun SelectionScreenContent(
             columns = GridCells.Fixed(2),
             state = rememberLazyGridState(),
             verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(12.dp)
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            contentPadding = PaddingValues(bottom = eventBottomPadding)
         ) {
             items(buttonList, key = { it.first }) {
                 InfoCard(
@@ -79,6 +81,7 @@ private fun SelectionScreenContent(
                     selectionScreenType = selectionScreenType
                 )
             }
+
         }
     }
 }

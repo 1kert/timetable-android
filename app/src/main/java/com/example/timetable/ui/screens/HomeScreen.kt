@@ -9,6 +9,8 @@ import androidx.compose.ui.unit.dp
 import com.example.timetable.components.AppTopBar
 import com.example.timetable.components.EventsList
 import com.example.timetable.data.TimetableEvent
+import com.example.timetable.ui.theme.eventHorizontalPadding
+import com.example.timetable.ui.theme.eventTopPadding
 
 @Composable
 fun HomeScreen(
@@ -55,8 +57,8 @@ private fun TimetablePage(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier
             .fillMaxSize()
-            .padding(top = 8.dp)
-            .padding(horizontal = 8.dp)
+            .padding(top = eventTopPadding)
+            .padding(horizontal = eventHorizontalPadding)
     ) {
         AppTopBar(
             dateString = getDayName(events),
